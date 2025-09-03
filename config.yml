@@ -9,7 +9,7 @@ engines:
     move_overhead_multiplier: 9.5         # Optimized for bullet games.
     uci_options:                          # Arbitrary UCI options passed to the engine.
       Threads: 8                          # Increased threads for Threadripper power.
-      Hash: 4000                           # Increased hash for better position evaluation.
+      Hash: 5300                           # Increased hash for better position evaluation.
       Move Overhead: 180                  # Reduced for faster bullet moves.
     limits:                               # Limits that end the move calculation early.
    #   depth: 28                          # Maximum search depth for bullet.
@@ -22,7 +22,7 @@ engines:
     move_overhead_multiplier: 3.0         # Increase if your bot flags games too often. Default move overhead is 1 second per 1 minute initital time.
     uci_options:                          # Arbitrary UCI options passed to the engine.
       Threads: 8                          # Max CPU threads the engine can use.
-      Hash: 5100                           # Max memory (in megabytes) the engine can allocate.
+      Hash: 5120                           # Max memory (in megabytes) the engine can allocate.
       Move Overhead: 200                  # Increase if your bot flags games too often.
     limits:
     
@@ -405,3 +405,4 @@ books:
   small: "./books/small.bin"
   nimas: "./books/nimas.bin"
   draw: "./books/draw.bin"
+
