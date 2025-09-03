@@ -2,11 +2,6 @@ name: Bot
 
 on:
   workflow_dispatch:
-    inputs:
-      commands:
-        description: 'commands'
-        required: true
-        default: 'matchmaking'
 
   schedule:
     - cron: '0 */6 * * *'
@@ -73,4 +68,4 @@ jobs:
     - name: Launch bot
       run: |
         echo "Starting bot..."
-        python3 -u user_interface.py ${{ github.event.inputs.commands }}
+        python3 -u user_interface.py matchmaking
