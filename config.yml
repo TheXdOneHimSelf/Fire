@@ -1,15 +1,15 @@
-token: "XXXXXXXXXXXXXXXXXXX"         # Lichess OAuth2 Token.
+token: "XXXXXXXXXXXXXXXXXXX"              # Lichess OAuth2 Token.
 
 engines:
-  bullet:                               # Engine used for standard chess and when no suitable special engine is configured.
+  bullet:                                 # Engine used for standard chess and when no suitable special engine is configured.
     dir: "./engines"                      # Directory containing the engine.
     name: "stockfish"                     # Binary name of the engine to use.
     ponder: true                          # Think on opponent's time.
     silence_stderr: false                 # Suppresses stderr output.
     move_overhead_multiplier: 9.5         # Optimized for bullet games.
     uci_options:                          # Arbitrary UCI options passed to the engine.
-      Threads: 8                          # Increased threads for Threadripper power.
-      Hash: 5300                           # Increased hash for better position evaluation.
+      Threads: 12                         # Increased threads for Threadripper power.
+      Hash: 5700                          # Increased hash for better position evaluation.
       Move Overhead: 180                  # Reduced for faster bullet moves.
     limits:                               # Limits that end the move calculation early.
    #   depth: 28                          # Maximum search depth for bullet.
@@ -21,33 +21,33 @@ engines:
     silence_stderr: false                 # Suppresses stderr output.
     move_overhead_multiplier: 3.0         # Increase if your bot flags games too often. Default move overhead is 1 second per 1 minute initital time.
     uci_options:                          # Arbitrary UCI options passed to the engine.
-      Threads: 8                          # Max CPU threads the engine can use.
-      Hash: 5120                           # Max memory (in megabytes) the engine can allocate.
+      Threads: 12                         # Max CPU threads the engine can use.
+      Hash: 5120                          # Max memory (in megabytes) the engine can allocate.
       Move Overhead: 200                  # Increase if your bot flags games too often.
     limits:
     
   standard:                               # Engine used for standard chess and when no suitable special engine is configured.
     dir: "./engines"                      # Directory containing the engine.
-    name: "ShashChess39"                     # Binary name of the engine to use.
+    name: "ShashChess39"                  # Binary name of the engine to use.
     ponder: true                          # Think on opponent's time.
     silence_stderr: false                 # Suppresses stderr output.
     move_overhead_multiplier: 1.0         # Increase if your bot flags games too often. Default move overhead is 1 second per 1 minute initital time.
     uci_options:                          # Arbitrary UCI options passed to the engine.
-      Threads: 8                          # Maximum Threadripper power for longer games.
-      Hash: 10000                           # Massive hash for deep calculation.
+      Threads: 32                         # Maximum Threadripper power for longer games.
+      Hash: 10000                         # Massive hash for deep calculation.
       Move Overhead: 100                  # Increase if your bot flags games too often.
     limits:    
-  #    depth: 35                           # Deep search for standard games.
-  #    nodes: 8000000                      # High node count for thorough analysis.
+  #    depth: 35                          # Deep search for standard games.
+  #    nodes: 8000000                     # High node count for thorough analysis.
   variants:                               # Engine used for variants when no suitable special engine is configured.
     dir: "./engines"                      # Directory containing the engine.
-    name: "fairy-stockfish_x86-64-bmi2"           # Binary name of the engine to use. (You need to download Fairy-Stockfish and place it in the engines directory)
+    name: "fairy-stockfish_x86-64-bmi2"   # Binary name of the engine to use. (You need to download Fairy-Stockfish and place it in the engines directory)
     ponder: true                          # Think on opponent's time.
     silence_stderr: false                 # Suppresses stderr output.
     move_overhead_multiplier: 1.0         # Increase if your bot flags games too often. Default move overhead is 1 second per 1 minute initital time.
     uci_options:                          # Arbitrary UCI options passed to the engine.
-      Threads: 8                          # High thread count for variants.
-      Hash: 10000                           # Large hash for variant calculations.
+      Threads: 6                          # High thread count for variants.
+      Hash: 10000                         # Large hash for variant calculations.
       Move Overhead: 100                  # Increase if your bot flags games too often.
       Use NNUE: true
       EvalFile: "3check-cb5f517c228b.nnue:antichess-dd3cbe53cd4e.nnue:atomic-2cf13ff256cc.nnue:crazyhouse-8ebf84784ad2.nnue:horde-28173ddccabe.nnue:kingofthehill-978b86d0e6a4.nnue:racingkings-636b95f085e3.nnue"
@@ -98,27 +98,27 @@ opening_books:
 #     selection: best_move                # Move selection is one of "weighted_random", "uniform_random" or "best_move".
 #     names:                              # List of names of books to use as black.
 #       - BlackBook
-    0.5+0:                          # 30 sec bullet games (0.5+0)
+    0.5+0:                            # 30 sec bullet games (0.5+0)
       selection: best_move
 #    max_depth: 20                    # Limit book depth so engine evaluates positions
       names:
         - draw
         - nimas
-    bullet_white:                            # Other bullet games (1+0)
+    bullet_white:                      # Other bullet games (1+0)
       selection: best_move
 #     max_depth: 20                    # Limit book depth so engine evaluates positions
       names:
         - draw
         - small
         - probook
-    bullet_black:                            # Aggressive black bullet setup
-      selection: best_move                # Always play strongest moves as black
-#     max_depth: 15                    # Deeper book usage for black preparation
+    bullet_black:                       # Aggressive black bullet setup
+      selection: best_move              # Always play strongest moves as black
+#     max_depth: 15                     # Deeper book usage for black preparation
       names:
         - draw
         - small
         - probook
-    3+0:                             # Blitz games (5+3)
+    3+0:
       selection: best_move
       names:
         - draw
@@ -266,19 +266,19 @@ online_moves:
 
 offer_draw:
   enabled: true                           # Activate whether the bot should offer draw.
-  score: 10                                # Tighter draw threshold - only accept truly equal positions.
-  consecutive_moves: 5                   # More moves required before considering draw.
+  score: 10                               # Tighter draw threshold - only accept truly equal positions.
+  consecutive_moves: 5                    # More moves required before considering draw.
   min_game_length: 25                     # Later draw offers to avoid early draws.
-  against_humans: false                    # Activate whether these settings should apply against humans.
-  allow_in_tournaments: true             # Allow offering draws in tournaments even for 0.5+0 games. By default, draws are never offered in 0.5+0 games.
+  against_humans: false                   # Activate whether these settings should apply against humans.
+  allow_in_tournaments: true              # Allow offering draws in tournaments even for 0.5+0 games. By default, draws are never offered in 0.5+0 games.
   accept_30_second_draws: true          
 # min_rating: 2300                        # Minimum rating of opponent to offer draw.
 
 resign:
-  enabled: true                          # Enable resignation to avoid hopeless positions.
-  score: -800                            # Resign when clearly losing (8 pawns down).
+  enabled: true                           # Enable resignation to avoid hopeless positions.
+  score: -800                             # Resign when clearly losing (8 pawns down).
   consecutive_moves: 8                    # More moves to confirm truly lost position.
-  against_humans: false                    # Never resign against humans - fight till the end.
+  against_humans: false                   # Never resign against humans - fight till the end.
 # min_rating: 2300                        # Minimum rating of opponent to resign.
 
 challenge:                                # Incoming challenges.
@@ -289,8 +289,8 @@ challenge:                                # Incoming challenges.
 # max_increment: 180                      # Maximum amount of increment to accept a challenge.
 # min_initial: 0                          # Minimum amount of initial time to accept a challenge.
 # max_initial: 315360000                  # Maximum amount of initial time to accept a challenge.
-  min_rating_diff: 0                     # Accept all bot challenges - no minimum rating difference
-  max_rating_diff: 300                   # Accept much stronger opponents for training
+  min_rating_diff: 0                      # Accept all bot challenges - no minimum rating difference
+  max_rating_diff: 300                    # Accept much stronger opponents for training
   variant_rating_diffs:
     standard:
       max: 200            
@@ -335,7 +335,7 @@ challenge:                                # Incoming challenges.
 #   - rated                               # Rated games
 
 matchmaking:
-  delay: 360                               # Time in seconds the bot must be idle before a new challenge is started.
+  delay: 360                              # Time in seconds the bot must be idle before a new challenge is started.
   timeout: 60                             # Time until a challenge is canceled.
   selection: cyclic                       # Matchmkaing type selection is one of "weighted_random", "sequential" or "cyclic".
   types:                                  # Matchmaking types of which one is selected before each game.
@@ -382,13 +382,13 @@ blacklist:                                # List of users who are not challenged
 
 
 books:                                    
-  Kasparov: "./masterbooks/Kasparov.bin"     # Kasparov's opening book 
-  Carlsen: "./masterbooks/Carlsen.bin"       # Carlsen's opening book
-  Caruana: "./masterbooks/Caruana.bin"       # Caruana's opening book
-  Ding: "./masterbooks/Ding.bin"             # Ding's opening book
-  Gukesh: "./masterbooks/Gukesh.bin"         # Gukesh's opening book
-  Nakamura: "./masterbooks/Nakamura.bin"     # Nakamura's opening book
-  Nepomniachtchi: "./masterbooks/Nepomniachtchi.bin"  # Nepomniachtchi's opening book
+  Kasparov: "./masterbooks/Kasparov.bin"
+  Carlsen: "./masterbooks/Carlsen.bin"
+  Caruana: "./masterbooks/Caruana.bin"
+  Ding: "./masterbooks/Ding.bin"
+  Gukesh: "./masterbooks/Gukesh.bin"
+  Nakamura: "./masterbooks/Nakamura.bin"
+  Nepomniachtchi: "./masterbooks/Nepomniachtchi.bin"
   probook: "./books/probook.bin"
   whiteanti: "./books/whiteanti.bin"
   blackanti: "./books/blackanti.bin"
@@ -407,5 +407,3 @@ books:
   nimas: "./books/nimas.bin"
   draw: "./books/draw.bin"
   ches: "./books/ches.bin"
-
-
