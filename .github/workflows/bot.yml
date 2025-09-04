@@ -4,11 +4,11 @@ on:
   workflow_dispatch:
 
   schedule:
-    - cron: '0 */6 * * *'
+    - cron: '0 */5 * * *'
 
 concurrency:
   group: "lichess-bot"
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 env:
   TOKEN: ${{ secrets.TOKEN }}
