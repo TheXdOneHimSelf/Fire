@@ -14,7 +14,7 @@ jobs:
       - name: Download and rename
         run: |
           mkdir -p book
-          curl -L -o book/ches.bin https://raw.githubusercontent.com/zonalraid45/Mypant/main/engines/merged.bin
+          curl -L -o books/ches.bin https://raw.githubusercontent.com/zonalraid45/Mypant/main/engines/merged.bin
 
       - name: Commit
         run: |
