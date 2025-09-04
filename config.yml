@@ -160,6 +160,7 @@ opening_books:
     chess960:
       selection: best_move
       names:
+        - ches
         - chess960
     atomic_black:
       selection: best_move
@@ -405,4 +406,6 @@ books:
   small: "./books/small.bin"
   nimas: "./books/nimas.bin"
   draw: "./books/draw.bin"
+  ches: "./books/ches.bin"
+
 
