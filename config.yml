@@ -16,13 +16,13 @@ engines:
 
   chess960:                               # Engine used for standard chess and when no suitable special engine is configured.
     dir: "./engines"                      # Directory containing the engine.
-    name: "stockfish"                     # Binary name of the engine to use.
+    name: "sf"                            # Binary name of the engine to use.
     ponder: true                          # Think on opponent's time.
     silence_stderr: false                 # Suppresses stderr output.
     move_overhead_multiplier: 3.0         # Increase if your bot flags games too often. Default move overhead is 1 second per 1 minute initital time.
     uci_options:                          # Arbitrary UCI options passed to the engine.
       Threads: 12                         # Max CPU threads the engine can use.
-      Hash: 5120                          # Max memory (in megabytes) the engine can allocate.
+      Hash: 7200                          # Max memory (in megabytes) the engine can allocate.
       Move Overhead: 200                  # Increase if your bot flags games too often.
     limits:
     
@@ -407,3 +407,4 @@ books:
   nimas: "./books/nimas.bin"
   draw: "./books/draw.bin"
   ches: "./books/ches.bin"
+
