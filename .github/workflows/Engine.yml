@@ -21,7 +21,7 @@ jobs:
       - name: Move Stockfish binary to engines folder
         run: |
           mkdir -p engines
-          mv stockfish/stockfish-ubuntu-x86-64-bmi2 engines/SF
+          mv stockfish/stockfish-ubuntu-x86-64-bmi2 engines/sf
 
       - name: Clean up
         run: rm -rf stockfish stockfish.tar
@@ -30,6 +30,6 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add engines/stockfish-ubuntu-x86-64-bmi2
+          git add engines/sf
           git commit -m "Update Stockfish binary"
           git push
