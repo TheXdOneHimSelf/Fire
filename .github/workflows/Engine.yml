@@ -1,10 +1,10 @@
-name: Download and Commit Stockfish
+name: Download and Commit
 
 on:
   workflow_dispatch:
 
 jobs:
-  download_and_commit_stockfish:
+  download:
     runs-on: ubuntu-latest
 
     steps:
