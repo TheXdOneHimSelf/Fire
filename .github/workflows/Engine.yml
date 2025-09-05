@@ -21,8 +21,7 @@ jobs:
       - name: Move Stockfish binary to engines folder
         run: |
           mkdir -p engines
-          mv stockfish/stockfish-ubuntu-x86-64-bmi2 engines/
-          chmod +x engines/SF
+          mv stockfish/stockfish-ubuntu-x86-64-bmi2 engines/SF
 
       - name: Clean up
         run: rm -rf stockfish stockfish.tar
