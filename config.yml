@@ -113,13 +113,6 @@ opening_books:
         - draw
         - small
         - probook
-    3+0:
-      selection: best_move
-      max_depth: 25                  
-      names:
-        - draw
-        - small
-        - probook
     standard:                           
       selection: best_move
       max_depth: 18 
@@ -132,18 +125,29 @@ opening_books:
         - draw
         - small
         - probook
-    3+0_tournament:
-      selection: best_move
-      max_depth: 25                  
-      names:
-        - draw
-        - small
-        - probook
     standard_tournament:                           
       selection: best_move
       names:
         - draw
-        - small  
+        - small
+    blitz_human_tournament:
+      selection: best_move
+      max_depth: 10
+      names:
+        - Nakamura
+        - Carlsen
+        - Nepomniachtchi
+    standard_human_tournament:                           
+      selection: best_move
+      max_depth: 10    
+      names:
+        - Kasparov
+        - Carlsen
+        - Caruana
+        - Ding
+        - Gukesh
+        - Nakamura
+        - Nepomniachtchi
     antichess_white:
       selection: best_move
       names:
@@ -422,3 +426,4 @@ books:
   nimas: "./books/nimas.bin"
   draw: "./books/draw.bin"
   ches: "./books/ches.bin"
+
