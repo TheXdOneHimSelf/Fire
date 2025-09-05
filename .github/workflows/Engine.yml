@@ -13,12 +13,26 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Download and extract Stockfish binary
+      - name: Download Stockfish tarball
+        run: curl -L "https://github.com/official-stockfish/Stockfish/releases/download/sf_17.1/stockfish-ubuntu-x86-64-bmi2.tar" -o stockfish.tar
+
+      - name: List contents of tarball
+        run: tar -tf stockfish.tar
+
+      - name: Extract and rename Stockfish binary
         run: |
-          curl -L "https://github.com/official-stockfish/Stockfish/releases/download/sf_17.1/stockfish-ubuntu-x86-64-bmi2.tar" -o stockfish.tar
           tar -xf stockfish.tar
+          ls -l          # See what files were extracted
           mkdir -p engines
-          mv stockfish-ubuntu-x86-64-bmi2 engines/SF
+          # If the extracted file is 'stockfish-ubuntu-x86-64-bmi2', use this:
+          if [ -f stockfish-ubuntu-x86-64-bmi2 ]; then
+            mv stockfish-ubuntu-x86-64-bmi2 engines/SF
+          elif [ -f stockfish ]; then
+            mv stockfish engines/SF
+          else
+            echo "Stockfish binary not found!"
+            exit 1
+          fi
           chmod +x engines/SF
 
       - name: Clean up
