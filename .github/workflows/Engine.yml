@@ -1,4 +1,4 @@
-name: Download and Commit Stockfish
+name: manual SF
 
 on:
   workflow_dispatch:
