@@ -1,4 +1,4 @@
-name: Download and Commit
+name: Download
 
 on:
   workflow_dispatch:
@@ -16,22 +16,21 @@ jobs:
       - name: Download and extract Stockfish
         run: |
           curl -L "https://github.com/official-stockfish/Stockfish/releases/download/sf_17.1/stockfish-ubuntu-x86-64-bmi2.tar" -o stockfish.tar
-          mkdir stockfish
-          tar -xf stockfish.tar -C stockfish
+          tar -xf stockfish.tar
 
       - name: Move Stockfish binary to engines folder as SF
         run: |
           mkdir -p engines
-          mv stockfish/stockfish-ubuntu-x86-64-bmi2 engines/SF
+          mv stockfish-ubuntu-x86-64-bmi2 engines/SF
           chmod +x engines/SF
 
       - name: Clean up
-        run: rm -rf stockfish stockfish.tar
+        run: rm -f stockfish.tar
 
       - name: Commit and push changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "files commited" || echo "No changes to commit"
+          git add engines/SF
+          git commit -m "Update Stockfish binary as SF" || echo "No changes to commit"
           git push
