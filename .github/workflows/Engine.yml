@@ -13,19 +13,13 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Download and extract Stockfish
+      - name: Download and extract Stockfish binary
         run: |
           curl -L "https://github.com/official-stockfish/Stockfish/releases/download/sf_17.1/stockfish-ubuntu-x86-64-bmi2.tar" -o stockfish.tar
-          tar -xf stockfish.tar
-
-      - name: List files after extraction
-        run: ls -l
-
-      - name: Move Stockfish binary to engines folder as SF
-        run: |
-          mkdir -p engines
-          mv stockfish engines/SF
-          chmod +x engines/SF
+          mkdir -p engines/SF
+          tar -xf stockfish.tar stockfish-ubuntu-x86-64-bmi2
+          mv stockfish-ubuntu-x86-64-bmi2 engines/SF/
+          chmod +x engines/SF/stockfish-ubuntu-x86-64-bmi2
 
       - name: Clean up
         run: rm -f stockfish.tar
@@ -34,6 +28,6 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add engines/SF
-          git commit -m "Update Stockfish binary as SF" || echo "No changes to commit"
+          git add engines/SF/stockfish-ubuntu-x86-64-bmi2
+          git commit -m "Update Stockfish binary" || echo "No changes to commit"
           git push
