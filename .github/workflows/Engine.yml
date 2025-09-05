@@ -1,0 +1,37 @@
+name: Download and Commit Stockfish
+
+on:
+  workflow_dispatch:
+
+jobs:
+  download_and_commit_stockfish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download and extract Stockfish
+        run: |
+          curl -L "https://github.com/official-stockfish/Stockfish/releases/download/sf_17.1/stockfish-ubuntu-x86-64-bmi2.tar" -o stockfish.tar
+          mkdir stockfish
+          tar -xf stockfish.tar -C stockfish
+
+      - name: Move Stockfish binary to engines folder as SF
+        run: |
+          mkdir -p engines
+          mv stockfish/stockfish-ubuntu-x86-64-bmi2 engines/SF
+          chmod +x engines/SF
+
+      - name: Clean up
+        run: rm -rf stockfish stockfish.tar
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "files commited" || echo "No changes to commit"
+          git push
