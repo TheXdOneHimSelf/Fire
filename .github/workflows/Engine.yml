@@ -16,7 +16,7 @@ jobs:
       - name: Download and extract Stockfish binary
         run: |
           curl -L "https://github.com/official-stockfish/Stockfish/releases/download/sf_17.1/stockfish-ubuntu-x86-64-bmi2.tar" -o stockfish.tar
-          tar -xf stockfish.tar stockfish-ubuntu-x86-64-bmi2
+          tar -xf stockfish.tar
           mkdir -p engines
           mv stockfish-ubuntu-x86-64-bmi2 engines/SF
           chmod +x engines/SF
