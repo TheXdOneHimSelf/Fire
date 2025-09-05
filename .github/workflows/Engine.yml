@@ -1,10 +1,10 @@
-name: Download
+name: Download and Commit Stockfish
 
 on:
   workflow_dispatch:
 
 jobs:
-  download:
+  download_and_commit_stockfish:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,10 +18,13 @@ jobs:
           curl -L "https://github.com/official-stockfish/Stockfish/releases/download/sf_17.1/stockfish-ubuntu-x86-64-bmi2.tar" -o stockfish.tar
           tar -xf stockfish.tar
 
+      - name: List files after extraction
+        run: ls -l
+
       - name: Move Stockfish binary to engines folder as SF
         run: |
           mkdir -p engines
-          mv stockfish-ubuntu-x86-64-bmi2 engines/SF
+          mv stockfish engines/SF
           chmod +x engines/SF
 
       - name: Clean up
