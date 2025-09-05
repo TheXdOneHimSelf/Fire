@@ -86,49 +86,64 @@ gaviota:
 
 opening_books:
   enabled: true                           # Activate opening books.
-  priority: 400                           # Priority with which this move source is used. Higher priority is used first.
+  priority: 999                           # Priority with which this move source is used. Higher priority is used first.
   read_learn: false                       # Whether to read the learn values from the books.
   books:
-#   bullet:
-#     selection: weighted_random          # Move selection is one of "weighted_random", "uniform_random" or "best_move".
-#     names:                              # List of names of books to use in bullet.
-#       - BulletBook
-#       - DefaultBook
-#   standard_black:
-#     selection: best_move                # Move selection is one of "weighted_random", "uniform_random" or "best_move".
-#     names:                              # List of names of books to use as black.
-#       - BlackBook
-    0.5+0:                            # 30 sec bullet games (0.5+0)
+    0.5+0:
       selection: best_move
-#    max_depth: 20                    # Limit book depth so engine evaluates positions
       names:
         - draw
         - nimas
-    bullet_white:                      # Other bullet games (1+0)
+    bullet_white:
       selection: best_move
-#     max_depth: 20                    # Limit book depth so engine evaluates positions
       names:
         - draw
         - small
         - probook
-    bullet_black:                       # Aggressive black bullet setup
-      selection: best_move              # Always play strongest moves as black
-#     max_depth: 15                     # Deeper book usage for black preparation
+    bullet_black:
+      selection: best_move
+      names:
+        - draw
+        - small
+        - probook
+    blitz:
+      selection: best_move
+      max_depth: 23
       names:
         - draw
         - small
         - probook
     3+0:
       selection: best_move
+      max_depth: 25                  
       names:
         - draw
         - small
         - probook
     standard:                           
       selection: best_move
+      max_depth: 18 
       names:
         - draw
         - small
+    blitz_tournament:
+      selection: best_move
+      names:
+        - draw
+        - small
+        - probook
+    3+0_tournament:
+      selection: best_move
+      max_depth: 25                  
+      names:
+        - draw
+        - small
+        - probook
+    standard_tournament:                           
+      selection: best_move
+      names:
+        - draw
+        - small  
     antichess_white:
       selection: best_move
       names:
@@ -407,4 +422,3 @@ books:
   nimas: "./books/nimas.bin"
   draw: "./books/draw.bin"
   ches: "./books/ches.bin"
-
