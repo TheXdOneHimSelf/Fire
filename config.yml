@@ -1,6 +1,19 @@
 token: "XXXXXXXXXXXXXXXXXXX"              # Lichess OAuth2 Token.
 
 engines:
+  3+0_tournament:                                  # Engine used for standard chess and when no suitable special engine is configured.
+    dir: "./engines"                      # Directory containing the engine.
+    name: "stockfish"                     # Binary name of the engine to use.
+    ponder: true                          # Think on opponent's time.
+    silence_stderr: false                 # Suppresses stderr output.
+    move_overhead_multiplier: 9.5         # Optimized for bullet games.
+    uci_options:                          # Arbitrary UCI options passed to the engine.
+      Threads: 12                         # Increased threads for Threadripper power.
+      Hash: 5700                          # Increased hash for better position evaluation.
+      Move Overhead: 180                  # Reduced for faster bullet moves.
+    limits:                               # Limits that end the move calculation early.
+  #    depth: 35                          # Deep search for standard games.
+  #    nodes: 8000000                     # High node count for thorough analysis.
   bullet:                                 # Engine used for standard chess and when no suitable special engine is configured.
     dir: "./engines"                      # Directory containing the engine.
     name: "stockfish"                     # Binary name of the engine to use.
@@ -12,8 +25,8 @@ engines:
       Hash: 5700                          # Increased hash for better position evaluation.
       Move Overhead: 180                  # Reduced for faster bullet moves.
     limits:                               # Limits that end the move calculation early.
-   #   depth: 28                          # Maximum search depth for bullet.
-
+  #    depth: 35                          # Deep search for standard games.
+  #    nodes: 8000000                     # High node count for thorough analysis.
   chess960:                               # Engine used for standard chess and when no suitable special engine is configured.
     dir: "./engines"                      # Directory containing the engine.
     name: "sf"                            # Binary name of the engine to use.
@@ -25,7 +38,9 @@ engines:
       Hash: 7200                          # Max memory (in megabytes) the engine can allocate.
       Move Overhead: 200                  # Increase if your bot flags games too often.
     limits:
-    
+      time: 0.01                          # Max time per move in seconds.
+      depth: 50                           # Max depth per move.
+      nodes: 4000000000                   # Max nodes per move.
   standard:                               # Engine used for standard chess and when no suitable special engine is configured.
     dir: "./engines"                      # Directory containing the engine.
     name: "ShashChess39"                  # Binary name of the engine to use.
@@ -426,4 +441,5 @@ books:
   nimas: "./books/nimas.bin"
   draw: "./books/draw.bin"
   ches: "./books/ches.bin"
+
 
