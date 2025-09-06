@@ -12,7 +12,7 @@ engines:
       Hash: 1000                          # Increased hash for better position evaluation.
       Move Overhead: 180                  # Reduced for faster bullet moves.
     limits:                               # Limits that end the move calculation early.
-      time: 0.01                          # Max time per move in seconds.
+      time: 0.0001                        # Max time per move in seconds.
       depth: 50                           # Max depth per move.
       nodes: 4000000000                   # Max nodes per move.
   bullet:                                 # Engine used for standard chess and when no suitable special engine is configured.
@@ -442,6 +442,7 @@ books:
   nimas: "./books/nimas.bin"
   draw: "./books/draw.bin"
   ches: "./books/ches.bin"
+
 
 
 
