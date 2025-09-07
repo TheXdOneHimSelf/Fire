@@ -49,8 +49,6 @@ jobs:
 
     - name: Launch bot
       run: |
-        echo "Starting indianguyplayz"
-        python -u user_interface.py matchmaking &
-        echo "Starting SKPS"
-        python -u user_interface.py --config config1.yml matchmaking &
+        (python -u user_interface.py matchmaking 2>&1 | sed 's/^/[indianguyplayz] /') &
+        (python -u user_interface.py --config config1.yml matchmaking 2>&1 | sed 's/^/[SKPS] /') &
         wait
