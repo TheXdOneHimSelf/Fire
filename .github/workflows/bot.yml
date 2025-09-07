@@ -10,9 +10,6 @@ concurrency:
   group: "lichess-bot"
   cancel-in-progress: false
 
-env:
-  TOKEN: ${{ secrets.TOKEN }}
-
 jobs:
   deploy-bot:
     runs-on: ubuntu-latest
@@ -48,8 +45,12 @@ jobs:
     - name: Configure bot
       run: |
         sed -i "s/XXXXXXXXXXXXXXXXXXX/${{ secrets.TOKEN }}/g" config.yml
+        sed -i "s/XXXXXXXXXXXXXXXXXXX/${{ secrets.TOKEN1 }}/g" config1.yml 
 
     - name: Launch bot
       run: |
-        echo "Starting bot..."
-        python3 -u user_interface.py matchmaking
+        echo "Starting indianguyplayz"
+        python -u user_interface.py matchmaking &
+        echo "Starting SKPS"
+        python -u user_interface.py --config config1.yml matchmaking &
+        wait
