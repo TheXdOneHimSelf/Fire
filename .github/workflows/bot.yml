@@ -39,6 +39,7 @@ jobs:
         chmod +x engines/stockfish
         chmod +x engines/fairy-stockfish_x86-64-bmi2
         chmod +x engines/ShashChess39
+        chmod +x engines/sf
         
         # Verify engines
         echo "📋 Listing engines:"
@@ -46,25 +47,8 @@ jobs:
 
     - name: Configure bot
       run: |
-        python3 << 'EOF'
-        import yaml, os
-        try:
-            with open('config.yml', 'r') as f:
-                config = yaml.safe_load(f) or {}
-            
-            config['token'] = os.environ['TOKEN']
-            config.setdefault('engine', {})
-            config['engine']['dir'] = './engines'
-            config['engine']['name'] = 'stockfish'
-            
-            with open('config.yml', 'w') as f:
-                yaml.dump(config, f, default_flow_style=False)
-            print("✅ Configuration successful")
-        except Exception as e:
-            print(f"❌ Error: {e}")
-            exit(1)
-        EOF
-        
+        sed -i "s/XXXXXXXXXXXXXXXXXXX/${{ secrets.TOKEN }}/g" config.yml
+
     - name: Launch bot
       run: |
         echo "Starting bot..."
