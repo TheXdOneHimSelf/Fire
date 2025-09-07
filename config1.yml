@@ -12,7 +12,7 @@ engines:
       Hash: 5120                          # Increased hash for better position evaluation.
       Move Overhead: 300                  # Reduced for faster bullet moves.
     limits:                               # Limits that end the move calculation early.
-      time: 0.0001                        # Max time per move in seconds.
+      time: 0.000001                      # Max time per move in seconds.
       depth: 99                           # Max depth per move.
       nodes: 4000000000                   # Max nodes per move.
   3+0_tournament:                         # Engine used for standard chess and when no suitable special engine is configured.
