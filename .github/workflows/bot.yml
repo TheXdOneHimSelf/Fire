@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  deploy-bot:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
