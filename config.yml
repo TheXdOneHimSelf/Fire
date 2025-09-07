@@ -36,7 +36,7 @@ engines:
     silence_stderr: false                 # Suppresses stderr output.
     move_overhead_multiplier: 1.0         # Optimized for bullet games.
     uci_options:                          # Arbitrary UCI options passed to the engine.
-      Threads: 4                         # Increased threads for Threadripper power.
+      Threads: 4                          # Increased threads for Threadripper power.
       Hash: 7800                          # Increased hash for better position evaluation.
       Move Overhead: 300                  # Reduced for faster bullet moves.
     limits:                               # Limits that end the move calculation early.
@@ -44,12 +44,12 @@ engines:
   #    nodes: 8000000                     # High node count for thorough analysis.
   chess960:                               # Engine used for standard chess and when no suitable special engine is configured.
     dir: "./engines"                      # Directory containing the engine.
-    name: "sf"                            # Binary name of the engine to use.
+    name: "stockfish"                     # Binary name of the engine to use.
     ponder: true                          # Think on opponent's time.
     silence_stderr: false                 # Suppresses stderr output.
     move_overhead_multiplier: 1.0         # Increase if your bot flags games too often. Default move overhead is 1 second per 1 minute initital time.
     uci_options:                          # Arbitrary UCI options passed to the engine.
-      Threads: 8                         # Max CPU threads the engine can use.
+      Threads: 8                          # Max CPU threads the engine can use.
       Hash: 7200                          # Max memory (in megabytes) the engine can allocate.
       Move Overhead: 300                  # Increase if your bot flags games too often.
     limits:
@@ -456,6 +456,7 @@ books:
   nimas: "./books/nimas.bin"
   draw: "./books/draw.bin"
   ches: "./books/ches.bin"
+
 
 
 
