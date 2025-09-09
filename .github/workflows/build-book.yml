@@ -19,5 +19,5 @@ jobs:
         with:
           name: book
           path: |
-            crazyhouse.pgn
-            crazy_black.bin
+            koth.pgn
+            koth_black.bin
