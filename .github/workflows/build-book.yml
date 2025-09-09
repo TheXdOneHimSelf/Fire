@@ -20,4 +20,4 @@ jobs:
           name: book
           path: |
             crazyhouse.pgn
-            crazyhouse.bin
+            crazy_black.bin
