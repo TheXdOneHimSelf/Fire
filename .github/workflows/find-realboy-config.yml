@@ -1,0 +1,26 @@
+name: Find Correct Config
+
+on:
+  workflow_dispatch:
+
+jobs:
+  find-config:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout target repo
+        uses: actions/checkout@v3
+        with:
+          repository: zonalraid45/Mypant
+          path: target-repo
+
+      - name: Search config for token
+        run: |
+          MATCH=$(grep -rl 'token: "TokenTimeIsBackBuddyss"' target-repo/Config/ || true)
+          if [ -z "$MATCH" ]; then
+            echo "No correct config file found."
+            exit 1
+          else
+            echo "Correct config file found:"
+            echo "$MATCH"
+          fi
