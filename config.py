@@ -27,7 +27,6 @@ class Config:
     challenge: Challenge_Config
     matchmaking: Matchmaking_Config
     messages: Messages_Config
-
     whitelist: list[str]
     blacklist: list[str]
     version: str
@@ -41,7 +40,7 @@ class Config:
                 print(f'There appears to be a syntax problem with your {yaml_path}', file=sys.stderr)
                 raise e
 
-        if 'token' not in yaml_config and 'LICHESS_BOT_TOKEN' in os.environ:
+        if not yaml_config.get('token') and 'LICHESS_BOT_TOKEN' in os.environ:
             yaml_config['token'] = os.environ['LICHESS_BOT_TOKEN']
 
         cls._check_sections(yaml_config)
@@ -56,7 +55,6 @@ class Config:
         challenge_config = cls._get_challenge_config(yaml_config['challenge'])
         matchmaking_config = cls._get_matchmaking_config(yaml_config['matchmaking'])
         messages_config = cls._get_messages_config(yaml_config['messages'] or {})
-
         whitelist = [username.lower() for username in yaml_config.get('whitelist') or []]
         blacklist = [username.lower() for username in yaml_config.get('blacklist') or []]
 
@@ -72,7 +70,6 @@ class Config:
                    challenge_config,
                    matchmaking_config,
                    messages_config,
-
                    whitelist,
                    blacklist,
                    cls._get_version())
@@ -244,7 +241,10 @@ class Config:
 
                 names[book_name] = config['books'][book_name]
 
-            books[section] = Books_Config(settings['selection'], settings.get('max_depth'), names, settings.get('random_selection', False))
+            books[section] = Books_Config(settings['selection'],
+                                          settings.get('max_depth'),
+                                          settings.get('allow_repetitions'),
+                                          names)
 
         return Opening_Books_Config(config['opening_books']['enabled'],
                                     config['opening_books']['priority'],
@@ -258,6 +258,7 @@ class Config:
             ['priority', int, '"priority" must be an integer.'],
             ['only_without_book', bool, '"only_without_book" must be a bool.'],
             ['use_for_variants', bool, '"use_for_variants" must be a bool.'],
+            ['allow_repetitions', bool, '"allow_repetitions" must be a bool.'],
             ['min_time', int, '"min_time" must be an integer.'],
             ['timeout', int, '"timeout" must be an integer.'],
             ['min_games', int, '"min_games" must be an integer.'],
@@ -278,6 +279,7 @@ class Config:
                                        opening_explorer_section.get('player'),
                                        opening_explorer_section['only_without_book'],
                                        opening_explorer_section['use_for_variants'],
+                                       opening_explorer_section['allow_repetitions'],
                                        opening_explorer_section['min_time'],
                                        opening_explorer_section['timeout'],
                                        opening_explorer_section['min_games'],
@@ -294,6 +296,8 @@ class Config:
             ['priority', int, '"priority" must be an integer.'],
             ['only_without_book', bool, '"only_without_book" must be a bool.'],
             ['use_for_variants', bool, '"use_for_variants" must be a bool.'],
+            ['allow_repetitions', bool, '"allow_repetitions" must be a bool.'],
+            ['trust_eval', bool, '"trust_eval" must be a bool.'],
             ['min_eval_depth', int, '"min_eval_depth" must be an integer.'],
             ['min_time', int, '"min_time" must be an integer.'],
             ['timeout', int, '"timeout" must be an integer.']]
@@ -310,6 +314,8 @@ class Config:
                                     lichess_cloud_section['priority'],
                                     lichess_cloud_section['only_without_book'],
                                     lichess_cloud_section['use_for_variants'],
+                                    lichess_cloud_section['allow_repetitions'],
+                                    lichess_cloud_section['trust_eval'],
                                     lichess_cloud_section['min_eval_depth'],
                                     lichess_cloud_section['min_time'],
                                     lichess_cloud_section['timeout'],
@@ -322,6 +328,8 @@ class Config:
             ['enabled', bool, '"enabled" must be a bool.'],
             ['priority', int, '"priority" must be an integer.'],
             ['only_without_book', bool, '"only_without_book" must be a bool.'],
+            ['allow_repetitions', bool, '"allow_repetitions" must be a bool.'],
+            ['trust_eval', bool, '"trust_eval" must be a bool.'],
             ['min_candidates', int, '"min_candidates" must be an integer.'],
             ['min_time', int, '"min_time" must be an integer.'],
             ['timeout', int, '"timeout" must be an integer.'],
@@ -338,6 +346,8 @@ class Config:
         return ChessDB_Config(chessdb_section['enabled'],
                               chessdb_section['priority'],
                               chessdb_section['only_without_book'],
+                              chessdb_section['allow_repetitions'],
+                              chessdb_section['trust_eval'],
                               chessdb_section['min_candidates'],
                               chessdb_section['min_time'],
                               chessdb_section['timeout'],
@@ -407,9 +417,7 @@ class Config:
                                  offer_draw_section['consecutive_moves'],
                                  offer_draw_section['min_game_length'],
                                  offer_draw_section['against_humans'],
-                                 offer_draw_section.get('min_rating'),
-                                 offer_draw_section.get('allow_in_tournaments', False),
-                                 offer_draw_section.get('accept_30_second_draws', False))
+                                 offer_draw_section.get('min_rating'))
 
     @staticmethod
     def _get_resign_config(resign_section: dict[str, Any]) -> Resign_Config:
@@ -460,10 +468,7 @@ class Config:
                                 challenge_section['variants'],
                                 challenge_section['time_controls'] or [],
                                 challenge_section['bot_modes'] or [],
-                                challenge_section['human_modes'] or [],
-                                challenge_section.get('min_rating_diff'),
-                                challenge_section.get('max_rating_diff'),
-                                challenge_section.get('variant_rating_diffs'))
+                                challenge_section['human_modes'] or [])
 
     @staticmethod
     def _get_matchmaking_config(matchmaking_section: dict[str, Any]) -> Matchmaking_Config:
@@ -505,8 +510,6 @@ class Config:
                                   matchmaking_section['timeout'],
                                   matchmaking_section['selection'],
                                   types)
-
-
 
     @staticmethod
     def _get_messages_config(messages_section: dict[str, str]) -> Messages_Config:

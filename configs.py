@@ -38,8 +38,8 @@ class Gaviota_Config:
 class Books_Config:
     selection: Literal['weighted_random', 'uniform_random', 'best_move']
     max_depth: int | None
+    allow_repetitions: bool | None
     names: dict[str, str]
-    random_selection: bool = False
 
 
 @dataclass
@@ -57,6 +57,7 @@ class Opening_Explorer_Config:
     player: str | None
     only_without_book: bool
     use_for_variants: bool
+    allow_repetitions: bool
     min_time: int
     timeout: int
     min_games: int
@@ -73,6 +74,8 @@ class Lichess_Cloud_Config:
     priority: int
     only_without_book: bool
     use_for_variants: bool
+    allow_repetitions: bool
+    trust_eval: bool
     min_eval_depth: int
     min_time: int
     timeout: int
@@ -85,6 +88,8 @@ class ChessDB_Config:
     enabled: bool
     priority: int
     only_without_book: bool
+    allow_repetitions: bool
+    trust_eval: bool
     min_candidates: int
     min_time: int
     timeout: int
@@ -116,8 +121,6 @@ class Offer_Draw_Config:
     min_game_length: int
     against_humans: bool
     min_rating: int | None
-    allow_in_tournaments: bool = False
-    accept_30_second_draws: bool = False
 
 
 @dataclass
@@ -142,9 +145,6 @@ class Challenge_Config:
     time_controls: list[str]
     bot_modes: list[str]
     human_modes: list[str]
-    min_rating_diff: int | None
-    max_rating_diff: int | None
-    variant_rating_diffs: dict[str, dict[str, int | None]] | None
 
 
 @dataclass
@@ -165,9 +165,6 @@ class Matchmaking_Config:
     timeout: int
     selection: Literal['weighted_random', 'sequential']
     types: dict[str, Matchmaking_Type_Config]
-
-
-
 
 
 @dataclass

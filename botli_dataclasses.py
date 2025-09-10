@@ -26,6 +26,7 @@ class API_Challenge_Reponse:
 class Book_Settings:
     selection: Literal['weighted_random', 'uniform_random', 'best_move'] = 'best_move'
     max_depth: int | None = None
+    allow_repetitions: bool | None = None
     readers: dict[str, MemoryMappedReader] = field(default_factory=dict)
 
 
@@ -185,11 +186,11 @@ class Game_Information:
         if initial_time_min.is_integer():
             initial_time_str = str(int(initial_time_min))
         elif initial_time_min == 0.25:
-            initial_time_str = '1/4'
+            initial_time_str = '¼'
         elif initial_time_min == 0.5:
-            initial_time_str = '1/2'
+            initial_time_str = '½'
         elif initial_time_min == 0.75:
-            initial_time_str = '3/4'
+            initial_time_str = '¾'
         else:
             initial_time_str = str(initial_time_min)
         increment_sec = self.increment_ms // 1000
@@ -210,6 +211,14 @@ class Game_Information:
     @property
     def black_opponent(self) -> chess.engine.Opponent:
         return chess.engine.Opponent(self.black_name, self.black_title, self.black_rating, self.black_title == 'BOT')
+
+    @property
+    def opponent_is_bot(self) -> bool:
+        return self.white_title == 'BOT' and self.black_title == 'BOT'
+
+    @property
+    def opponent_is_human(self) -> bool:
+        return self.white_title != 'BOT' or self.black_title != 'BOT'
 
 
 @dataclass
@@ -276,11 +285,11 @@ class Matchmaking_Type:
         if initial_time_min.is_integer():
             initial_time_str = str(int(initial_time_min))
         elif initial_time_min == 0.25:
-            initial_time_str = '1/4'
+            initial_time_str = '¼'
         elif initial_time_min == 0.5:
-            initial_time_str = '1/2'
+            initial_time_str = '½'
         elif initial_time_min == 0.75:
-            initial_time_str = '3/4'
+            initial_time_str = '¾'
         else:
             initial_time_str = str(initial_time_min)
         tc_str = f'TC: {initial_time_str}+{self.increment}'
@@ -303,9 +312,9 @@ class Move_Response:
     public_message: str
     private_message: str = field(default='', kw_only=True)
     pv: list[chess.Move] = field(default_factory=list, kw_only=True)
-    is_drawish: bool = field(default=False, kw_only=True)
-    is_resignable: bool = field(default=False, kw_only=True)
-    is_engine_move: bool = field(default=False, kw_only=True)
+    is_draw: bool | None = field(default=None, kw_only=True)
+    is_lost: bool | None = field(default=None, kw_only=True)
+    trusted_eval: bool = field(default=False, kw_only=True)
 
 
 @dataclass

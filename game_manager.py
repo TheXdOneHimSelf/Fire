@@ -201,6 +201,7 @@ class Game_Manager:
 
         del self.tournaments[tournament.id_]
         print(f'Tournament "{tournament.name}" has ended.')
+        self._set_next_matchmaking(self.config.matchmaking.delay)
         self.changed_event.set()
 
     def _set_next_matchmaking(self, delay: int) -> None:
@@ -255,8 +256,6 @@ class Game_Manager:
     async def _accept_challenge(self, challenge: Challenge) -> None:
         if await self.api.accept_challenge(challenge.challenge_id):
             self.reserved_game_spots += 1
-        else:
-            print(f"Failed to accept challenge {challenge.challenge_id}")
 
     async def _check_matchmaking(self) -> None:
         self.next_matchmaking = None
