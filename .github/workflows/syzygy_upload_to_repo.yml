@@ -1,0 +1,64 @@
+name: Restore Syzygy Files
+
+on:
+  workflow_dispatch:
+
+jobs:
+  restore_syzygy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout with Git LFS support
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Install tools
+        run: sudo apt update && sudo apt install -y jq coreutils
+
+      - name: Create engines/syzygy directory
+        run: mkdir -p engines/syzygy
+
+      - name: Get file list from source repo
+        id: list_files
+        run: |
+          echo "files<<EOF" >> "$GITHUB_OUTPUT"
+          curl -s https://api.github.com/repos/suprateem-ux/suprabot/contents/engines/syzygy \
+            | jq -r '.[] | select(.type == "file") | .name' \
+            >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Download Syzygy files to engines/syzygy/
+        run: |
+          base_url="https://raw.githubusercontent.com/suprateem-ux/suprabot/main/engines/syzygy"
+          while read -r file; do
+            curl -sSL "$base_url/$file" -o "engines/syzygy/$file"
+          done <<< "${{ steps.list_files.outputs.files }}"
+
+      - name: Verify and fix corrupted files
+        run: |
+          cd engines/syzygy
+          base_url="https://raw.githubusercontent.com/suprateem-ux/suprabot/main/engines/syzygy"
+          if [ -f checksum.md5 ]; then
+            echo "Checking checksums..."
+            bad_files=$(md5sum -c checksum.md5 | grep -v OK | cut -d: -f1 || true)
+            for file in $bad_files; do
+              echo "Redownloading corrupted file: $file"
+              curl -sSL "$base_url/$file" -o "$file"
+            done
+          else
+            echo "checksum.md5 not found — skipping verification"
+          fi
+
+      - name: Track Syzygy files with Git LFS
+        run: |
+          git lfs track "engines/syzygy/*.rtbw"
+          git lfs track "engines/syzygy/*.rtbz"
+
+      - name: Commit and push Syzygy directory
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add engines/syzygy .gitattributes
+          git commit -m "Add verified Syzygy tablebase files" || echo "Nothing to commit"
+          git push
