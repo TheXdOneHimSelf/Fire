@@ -291,7 +291,7 @@ challenge:                                # Incoming challenges.
 #   - rated                               # Rated games
 
 matchmaking:
-  delay: 360                              # Time in seconds the bot must be idle before a new challenge is started.
+  delay: 60                               # Time in seconds the bot must be idle before a new challenge is started.
   timeout: 60                             # Time until a challenge is canceled.
   selection: cyclic                       # Matchmkaing type selection is one of "weighted_random", "sequential" or "cyclic".
   types:                                  # Matchmaking types of which one is selected before each game.
@@ -414,4 +414,5 @@ books:
   nimas: "./books/nimas.bin"
   draw: "./books/draw.bin"
   ches: "./books/ches.bin"
+
 
