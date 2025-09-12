@@ -90,65 +90,22 @@ opening_books:
   enabled: true                           # Activate opening books.
   priority: 999                           # Priority with which this move source is used. Higher priority is used first.
   books:
-    0.5+0:
+    0.5+0_bot:
       selection: best_move
       names:
         - draw
         - nimas
-    bullet_white:
+    standard_bot:                           
+      selection: best_move
+      max_depth: 6 
+      names:
+        - draw
+        - small
+    standard_tournament_bot:                           
       selection: best_move
       names:
         - draw
         - small
-        - probook
-    bullet_black:
-      selection: best_move
-      names:
-        - draw
-        - small
-        - probook
-    blitz:
-      selection: best_move
-      max_depth: 23
-      names:
-        - draw
-        - small
-        - probook
-    standard:                           
-      selection: best_move
-      max_depth: 18 
-      names:
-        - draw
-        - small
-    blitz_tournament:
-      selection: best_move
-      names:
-        - draw
-        - small
-        - probook
-    standard_tournament:                           
-      selection: best_move
-      names:
-        - draw
-        - small
-    blitz_human_tournament:
-      selection: best_move
-      max_depth: 10
-      names:
-        - Nakamura
-        - Carlsen
-        - Nepomniachtchi
-    standard_human_tournament:                           
-      selection: best_move
-      max_depth: 10    
-      names:
-        - Kasparov
-        - Carlsen
-        - Caruana
-        - Ding
-        - Gukesh
-        - Nakamura
-        - Nepomniachtchi
     antichess_white:
       selection: best_move
       names:
@@ -338,13 +295,66 @@ matchmaking:
   timeout: 60                             # Time until a challenge is canceled.
   selection: cyclic                       # Matchmkaing type selection is one of "weighted_random", "sequential" or "cyclic".
   types:                                  # Matchmaking types of which one is selected before each game.
+    hyperbullet:                          # Arbitrary name of the matchmaking type. Names must be unique.
+      tc: 0.5+0                           # Time control in initial_minutes+increment_seconds format.
+      rated: false                        # Whether matchmaking should play rated games. Default: true
+    slowhyperbullet:                      # Arbitrary name of the matchmaking type. Names must be unique.
+      tc: 0.5+1                           # Time control in initial_minutes+increment_seconds format.
+      rated: false                        # Whether matchmaking should play rated games. Default: true
+    fastbullet:                           # Arbitrary name of the matchmaking type. Names must be unique.
+      tc: 1+0                             # Time control in initial_minutes+increment_seconds format.
+      rated: false                        # Whether matchmaking should play rated games. Default: true
     bullet:                               # Arbitrary name of the matchmaking type. Names must be unique.
-      tc: 0.5+0                           # Time control in initial_minutes+increment_seconds format.
+      tc: 1+1                             # Time control in initial_minutes+increment_seconds format.
       rated: false                        # Whether matchmaking should play rated games. Default: true
-    chess960:                             # Arbitrary name of the matchmaking type. Names must be unique.
-      tc: 0.5+0                           # Time control in initial_minutes+increment_seconds format.
+    slowbullet:                           # Arbitrary name of the matchmaking type. Names must be unique.
+      tc: 2+0                             # Time control in initial_minutes+increment_seconds format.
       rated: false                        # Whether matchmaking should play rated games. Default: true
-      variant: chess960                   # Chess variant (https://lichess.org/variant) to challenge. Default: standard
+    slowerbullet:                         # Arbitrary name of the matchmaking type. Names must be unique.
+      tc: 2+0                             # Time control in initial_minutes+increment_seconds format.
+      rated: false                        # Whether matchmaking should play rated games. Default: true
+    fastblitz:                            # Arbitrary name of the matchmaking type. Names must be unique.
+      tc: 3+0                             # Time control in initial_minutes+increment_seconds format.
+      rated: false                        # Whether matchmaking should play rated games. Default: true
+    blitz:                                # Arbitrary name of the matchmaking type. Names must be unique.
+      tc: 3+2                             # Time control in initial_minutes+increment_seconds format.
+      rated: false                        # Whether matchmaking should play rated games. Default: true
+    slowblitz:                            # Arbitrary name of the matchmaking type. Names must be unique.
+      tc: 5+0                             # Time control in initial_minutes+increment_seconds format.
+      rated: false                        # Whether matchmaking should play rated games. Default: true
+    slowerblitz:                          # Arbitrary name of the matchmaking type. Names must be unique.
+      tc: 5+2                             # Time control in initial_minutes+increment_seconds format.
+      rated: false                        # Whether matchmaking should play rated games. Default: true
+    slowestblitz:                         # Arbitrary name of the matchmaking type. Names must be unique.
+      tc: 5+3                             # Time control in initial_minutes+increment_seconds format.
+      rated: false                        # Whether matchmaking should play rated games. Default: true
+    fastrapid:                            # Arbitrary name of the matchmaking type. Names must be unique.
+      tc: 10+0                            # Time control in initial_minutes+increment_seconds format.
+      rated: false                        # Whether matchmaking should play rated games. Default: true
+    superrapid:                           # Arbitrary name of the matchmaking type. Names must be unique.
+      tc: 10+3                            # Time control in initial_minutes+increment_seconds format.
+      rated: false                        # Whether matchmaking should play rated games. Default: true
+    rapid:                                # Arbitrary name of the matchmaking type. Names must be unique.
+      tc: 10+5                            # Time control in initial_minutes+increment_seconds format.
+      rated: false                        # Whether matchmaking should play rated games. Default: true
+    slowrapid:                            # Arbitrary name of the matchmaking type. Names must be unique.
+      tc: 15+0                            # Time control in initial_minutes+increment_seconds format.
+      rated: false                        # Whether matchmaking should play rated games. Default: true
+    slowerrapid:                          # Arbitrary name of the matchmaking type. Names must be unique.
+      tc: 15+5                            # Time control in initial_minutes+increment_seconds format.
+      rated: false                        # Whether matchmaking should play rated games. Default: true
+    slowestrapid:                         # Arbitrary name of the matchmaking type. Names must be unique.
+      tc: 15+10                           # Time control in initial_minutes+increment_seconds format.
+      rated: false                        # Whether matchmaking should play rated games. Default: true
+    fastclassical:                        # Arbitrary name of the matchmaking type. Names must be unique.
+      tc: 30+0                            # Time control in initial_minutes+increment_seconds format.
+      rated: false                        # Whether matchmaking should play rated games. Default: true
+    classical:                            # Arbitrary name of the matchmaking type. Names must be unique.
+      tc: 30+20                           # Time control in initial_minutes+increment_seconds format.
+      rated: false                        # Whether matchmaking should play rated games. Default: true
+    slowerclassical:                      # Arbitrary name of the matchmaking type. Names must be unique.
+      tc: 15+15                           # Time control in initial_minutes+increment_seconds format.
+      rated: false                        # Whether matchmaking should play rated games. Default: true
 #   casual_chess960:
 #     tc: 0.5+1
 #     rated: false
@@ -403,5 +413,5 @@ books:
   small: "./books/small.bin"
   nimas: "./books/nimas.bin"
   draw: "./books/draw.bin"
-
   ches: "./books/ches.bin"
+
