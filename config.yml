@@ -1,7 +1,7 @@
 token: "XXXXXXXXXXXXXXXXXXX"              # Lichess OAuth2 Token.
 
 engines:
-  0.5+0_tournament:                       # Engine used for standard chess and when no suitable special engine is configured.
+  standard_tournament:                    # Engine used for standard chess and when no suitable special engine is configured.
     dir: "./engines"                      # Directory containing the engine.
     name: "stockfish"                     # Binary name of the engine to use.
     ponder: true                          # Think on opponent's time.
@@ -12,23 +12,9 @@ engines:
       Hash: 1024                          # Increased hash for better position evaluation.
       Move Overhead: 300                  # Reduced for faster bullet moves.
     limits:                               # Limits that end the move calculation early.
-      time: 0.0001                        # Max time per move in seconds.
+      time: 0.0000001                     # Max time per move in seconds.
       depth: 99                           # Max depth per move.
-      nodes: 174200000                    # Max nodes per move.
-  3+0_tournament:                         # Engine used for standard chess and when no suitable special engine is configured.
-    dir: "./engines"                      # Directory containing the engine.
-    name: "stockfish"                     # Binary name of the engine to use.
-    ponder: true                          # Think on opponent's time.
-    silence_stderr: false                 # Suppresses stderr output.
-    move_overhead_multiplier: 1.0         # Optimized for bullet games.
-    uci_options:                          # Arbitrary UCI options passed to the engine.
-      Threads: 4                          # Increased threads for Threadripper power.
-      Hash: 1024                          # Increased hash for better position evaluation.
-      Move Overhead: 200                  # Reduced for faster bullet moves.
-    limits:                               # Limits that end the move calculation early.
-      time: 0.0001                        # Max time per move in seconds.
-      depth: 99                           # Max depth per move.
-      nodes: 174200000                    # Max nodes per move.
+      nodes: 400000000                    # Max nodes per move.
   bullet:                                 # Engine used for standard chess and when no suitable special engine is configured.
     dir: "./engines"                      # Directory containing the engine.
     name: "stockfish"                     # Binary name of the engine to use.
@@ -65,14 +51,10 @@ engines:
     uci_options:                          # Arbitrary UCI options passed to the engine.
       Threads: 8                         # Maximum Threadripper power for longer games.
       Hash: 10240                         # Massive hash for deep calculation.
-      Move Overhead: 100                  # Increase if your bot flags games too often.
+      Move Overhead: 250                  # Increase if your bot flags games too often.
     limits:    
   #    depth: 35                          # Deep search for standard games.
   #    nodes: 8000000                     # High node count for thorough analysis.
-# Use the same pattern for 'bullet', 'blitz', 'rapid', 'classical', time controls in initial_minutes+increment_seconds format,
-# 'antichess', 'atomic', 'chess960', 'crazyhouse', 'horde', 'kingofthehill', 'racingkings' and '3check' as well.
-# Append '_white', '_black', '_human' and/or '_tournament' to use the engine only as the specific color, against humans or in tournaments.
-
 # Use the same pattern for 'bullet', 'blitz', 'rapid', 'classical', time controls in initial_minutes+increment_seconds format,
 # 'antichess', 'atomic', 'chess960', 'crazyhouse', 'horde', 'kingofthehill', 'racingkings' and '3check' as well.
 # Append '_white', '_black', '_human', '_bot', '_rated', '_casual' and/or '_tournament'
@@ -421,4 +403,5 @@ books:
   small: "./books/small.bin"
   nimas: "./books/nimas.bin"
   draw: "./books/draw.bin"
+
   ches: "./books/ches.bin"
