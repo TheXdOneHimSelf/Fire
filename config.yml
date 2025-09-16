@@ -1,7 +1,7 @@
 token: "XXXXXXXXXXXXXXXXXXX"              # Lichess OAuth2 Token.
 
 engines:
-  standard_tournament:                    # Engine used for standard chess and when no suitable special engine is configured.
+  standard_tournament_bot:                # Engine used for standard chess and when no suitable special engine is configured.
     dir: "./engines"                      # Directory containing the engine.
     name: "fireengine"                    # Binary name of the engine to use.
     ponder: true                          # Think on opponent's time.
@@ -414,6 +414,7 @@ books:
   nimas: "./books/nimas.bin"
   draw: "./books/draw.bin"
   ches: "./books/ches.bin"
+
 
 
 
