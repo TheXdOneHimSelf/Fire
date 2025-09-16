@@ -13,7 +13,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT_TOKEN }}
 
       - name: Remove old fireengine files
         run: |
@@ -134,5 +134,5 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "Update FireEngine binary from latest compilation"
-            git push
+            git push origin HEAD:main
           fi
