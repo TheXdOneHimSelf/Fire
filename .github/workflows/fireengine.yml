@@ -27,8 +27,9 @@ jobs:
             "https://api.github.com/repos/TheXdOneHimSelf/Stockfish/actions/workflows/compilation.yml/runs?status=success&per_page=1" \
             | jq -r '.workflow_runs[0].id')
           echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
+          echo "Latest run ID: $RUN_ID"
 
-      - name: Download artifacts from latest run
+      - name: List available artifacts (debug)
         uses: actions/github-script@v6
         with:
           script: |
@@ -38,61 +39,91 @@ jobs:
               run_id: process.env.RUN_ID
             });
             
-            // Look for tar artifacts (GitHub will download them as zip)
-            const artifact = artifacts.data.artifacts.find(a => 
-              a.name.endsWith('.tar') || a.name.endsWith('.tar.gz') || 
-              a.name.includes('engine') || a.name.includes('binary')
-            );
+            console.log('Available artifacts:');
+            artifacts.data.artifacts.forEach(artifact => {
+              console.log(`- ${artifact.name} (${artifact.size} bytes)`);
+            });
             
-            if (artifact) {
-              console.log(`Found artifact: ${artifact.name}`);
-              const download = await github.rest.actions.downloadArtifact({
-                owner: 'TheXdOneHimSelf',
-                repo: 'Stockfish',
-                artifact_id: artifact.id,
-                archive_format: 'zip'
-              });
-              
-              const fs = require('fs');
-              fs.writeFileSync('/tmp/artifact.zip', Buffer.from(download.data));
-              return artifact.name;
+            // Return the first artifact found
+            if (artifacts.data.artifacts.length > 0) {
+              return artifacts.data.artifacts[0].name;
             } else {
-              throw new Error('No artifact found');
+              throw new Error('No artifacts found in the workflow run');
             }
 
-      - name: Extract and process tar file
+      - name: Download the first available artifact
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: 'TheXdOneHimSelf',
+              repo: 'Stockfish',
+              run_id: process.env.RUN_ID
+            });
+            
+            if (artifacts.data.artifacts.length === 0) {
+              throw new Error('No artifacts available for download');
+            }
+            
+            // Download the first artifact
+            const artifact = artifacts.data.artifacts[0];
+            console.log(`Downloading artifact: ${artifact.name}`);
+            
+            const download = await github.rest.actions.downloadArtifact({
+              owner: 'TheXdOneHimSelf',
+              repo: 'Stockfish',
+              artifact_id: artifact.id,
+              archive_format: 'zip'
+            });
+            
+            const fs = require('fs');
+            fs.writeFileSync('/tmp/artifact.zip', Buffer.from(download.data));
+            return artifact.name;
+
+      - name: Extract and process the artifact
         run: |
-          # Extract the GitHub artifact zip to get the tar file
-          unzip /tmp/artifact.zip -d /tmp
+          # Extract the downloaded artifact
+          mkdir -p /tmp/artifact_extracted
+          unzip /tmp/artifact.zip -d /tmp/artifact_extracted
           
-          # Find the tar file that was inside the artifact
-          TAR_FILE=$(find /tmp -name "*.tar" -o -name "*.tar.gz" | head -1)
+          echo "Contents of artifact:"
+          find /tmp/artifact_extracted -type f | while read file; do
+            echo "  - $file"
+          done
           
-          if [ -z "$TAR_FILE" ]; then
-            echo "No tar file found in artifact"
-            exit 1
+          # Look for any binary files or tar files
+          if find /tmp/artifact_extracted -name "stockfish-ubuntu-x86-64-bmi2" | grep -q .; then
+            echo "Found binary directly in artifact"
+            mkdir -p engines
+            find /tmp/artifact_extracted -name "stockfish-ubuntu-x86-64-bmi2" -exec mv {} engines/fireengine \;
+          elif find /tmp/artifact_extracted -name "*.tar" -o -name "*.tar.gz" | grep -q .; then
+            echo "Found tar file in artifact"
+            TAR_FILE=$(find /tmp/artifact_extracted -name "*.tar" -o -name "*.tar.gz" | head -1)
+            tar -xf "$TAR_FILE" -C /tmp
+            mkdir -p engines
+            mv /tmp/stockfish/stockfish-ubuntu-x86-64-bmi2 engines/fireengine
+          else
+            echo "Looking for any executable files..."
+            BINARY_FILE=$(find /tmp/artifact_extracted -type f -executable | head -1)
+            if [ -n "$BINARY_FILE" ]; then
+              echo "Found executable: $BINARY_FILE"
+              mkdir -p engines
+              cp "$BINARY_FILE" engines/fireengine
+            else
+              echo "No binary or tar files found in artifact"
+              exit 1
+            fi
           fi
           
-          echo "Found tar file: $TAR_FILE"
-          
-          # Extract the tar file
-          tar -xf "$TAR_FILE" -C /tmp
-          
-          # Create engines directory if it doesn't exist
-          mkdir -p engines
-          
-          # Move and rename the binary from the tar extraction
-          mv /tmp/stockfish/stockfish-ubuntu-x86-64-bmi2 engines/fireengine
           chmod +x engines/fireengine
-          
-          echo "Binary successfully moved to engines/fireengine"
+          echo "Binary successfully placed in engines/fireengine"
 
       - name: Clean up all temporary files
         run: |
           rm -rf /tmp/artifact.zip
-          rm -rf /tmp/*.tar /tmp/*.tar.gz
-          rm -rf /tmp/stockfish
           rm -rf /tmp/artifact_extracted
+          rm -rf /tmp/stockfish
+          rm -rf /tmp/*.tar /tmp/*.tar.gz
 
       - name: Commit and push changes
         run: |
