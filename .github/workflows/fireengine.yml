@@ -27,9 +27,8 @@ jobs:
             "https://api.github.com/repos/TheXdOneHimSelf/Stockfish/actions/workflows/compilation.yml/runs?status=success&per_page=1" \
             | jq -r '.workflow_runs[0].id')
           echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
-          echo "Latest run ID: $RUN_ID"
 
-      - name: List available artifacts (debug)
+      - name: Download the stockfish artifact
         uses: actions/github-script@v6
         with:
           script: |
@@ -39,34 +38,13 @@ jobs:
               run_id: process.env.RUN_ID
             });
             
-            console.log('Available artifacts:');
-            artifacts.data.artifacts.forEach(artifact => {
-              console.log(`- ${artifact.name} (${artifact.size} bytes)`);
-            });
+            // Find the stockfish-ubuntu-x86-64-bmi2 artifact
+            const artifact = artifacts.data.artifacts.find(a => a.name === 'stockfish-ubuntu-x86-64-bmi2');
             
-            // Return the first artifact found
-            if (artifacts.data.artifacts.length > 0) {
-              return artifacts.data.artifacts[0].name;
-            } else {
-              throw new Error('No artifacts found in the workflow run');
-            }
-
-      - name: Download the first available artifact
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
-              owner: 'TheXdOneHimSelf',
-              repo: 'Stockfish',
-              run_id: process.env.RUN_ID
-            });
-            
-            if (artifacts.data.artifacts.length === 0) {
-              throw new Error('No artifacts available for download');
+            if (!artifact) {
+              throw new Error('stockfish-ubuntu-x86-64-bmi2 artifact not found');
             }
             
-            // Download the first artifact
-            const artifact = artifacts.data.artifacts[0];
             console.log(`Downloading artifact: ${artifact.name}`);
             
             const download = await github.rest.actions.downloadArtifact({
@@ -80,50 +58,26 @@ jobs:
             fs.writeFileSync('/tmp/artifact.zip', Buffer.from(download.data));
             return artifact.name;
 
-      - name: Extract and process the artifact
+      - name: Extract and rename binary
         run: |
           # Extract the downloaded artifact
-          mkdir -p /tmp/artifact_extracted
-          unzip /tmp/artifact.zip -d /tmp/artifact_extracted
+          unzip /tmp/artifact.zip -d /tmp
           
-          echo "Contents of artifact:"
-          find /tmp/artifact_extracted -type f | while read file; do
-            echo "  - $file"
-          done
+          # Extract the tar file (contains stockfish-ubuntu-x86-64-bmi2 at root level)
+          tar -xf /tmp/stockfish-ubuntu-x86-64-bmi2.tar -C /tmp
           
-          # Look for any binary files or tar files
-          if find /tmp/artifact_extracted -name "stockfish-ubuntu-x86-64-bmi2" | grep -q .; then
-            echo "Found binary directly in artifact"
-            mkdir -p engines
-            find /tmp/artifact_extracted -name "stockfish-ubuntu-x86-64-bmi2" -exec mv {} engines/fireengine \;
-          elif find /tmp/artifact_extracted -name "*.tar" -o -name "*.tar.gz" | grep -q .; then
-            echo "Found tar file in artifact"
-            TAR_FILE=$(find /tmp/artifact_extracted -name "*.tar" -o -name "*.tar.gz" | head -1)
-            tar -xf "$TAR_FILE" -C /tmp
-            mkdir -p engines
-            mv /tmp/stockfish/stockfish-ubuntu-x86-64-bmi2 engines/fireengine
-          else
-            echo "Looking for any executable files..."
-            BINARY_FILE=$(find /tmp/artifact_extracted -type f -executable | head -1)
-            if [ -n "$BINARY_FILE" ]; then
-              echo "Found executable: $BINARY_FILE"
-              mkdir -p engines
-              cp "$BINARY_FILE" engines/fireengine
-            else
-              echo "No binary or tar files found in artifact"
-              exit 1
-            fi
-          fi
-          
+          # Create engines directory and move/rename the binary
+          mkdir -p engines
+          mv /tmp/stockfish-ubuntu-x86-64-bmi2 engines/fireengine
           chmod +x engines/fireengine
-          echo "Binary successfully placed in engines/fireengine"
+          
+          echo "Binary successfully moved to engines/fireengine"
 
-      - name: Clean up all temporary files
+      - name: Clean up temporary files
         run: |
           rm -rf /tmp/artifact.zip
-          rm -rf /tmp/artifact_extracted
-          rm -rf /tmp/stockfish
-          rm -rf /tmp/*.tar /tmp/*.tar.gz
+          rm -rf /tmp/stockfish-ubuntu-x86-64-bmi2.tar
+          rm -rf /tmp/stockfish-ubuntu-x86-64-bmi2
 
       - name: Commit and push changes
         run: |
