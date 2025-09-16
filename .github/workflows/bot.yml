@@ -29,6 +29,15 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    - name: Fetch config.yml
+      env:
+        token: ${{ secrets.PAT_TOKEN }}
+      run: |
+        curl -s -H "Authorization: token $token" \
+             -H "Accept: application/vnd.github.v3.raw" \
+             -o config.yml \
+             https://api.github.com/repos/TheXdOneHimSelf/configs/contents/FireConfig.yml
+
     - name: Setup engines
       run: |      
         # Set permissions for all engines
