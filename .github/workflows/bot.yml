@@ -42,7 +42,7 @@ jobs:
 
     - name: Configure bot
       run: |
-        sed -i "s/XXXXXXXXXXXXXXXXXXX/${{ secrets.TOKEN1 }}/g" config.yml
+        sed -i "s/XXXXXXXXXXXXXXXXXXX/${{ secrets.TOKEN }}/g" config.yml
 
     - name: Launch bot
       run: |
