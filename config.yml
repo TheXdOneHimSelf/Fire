@@ -375,10 +375,10 @@ messages:
   #   {cpu} to insert CPU information
   #   {ram} to insert RAM size
   # Any other words in curly braces will be removed.
-  greeting: "Hello {opponent}! Good luck and have fun! Type !help for a list of commands."
+  greeting: "Hello {opponent}! , I run on {engine}"
   goodbye: "Thank you for the game, {opponent}!"
-  greeting_spectators: "Welcome spectators! Type !help for a list of commands."
-  goodbye_spectators: "Thank you all for watching!"
+  greeting_spectators: "Good Luck {me} and {opponent}"
+  goodbye_spectators: "I run on {engine} written by @tryop and to know more about The engine DM @mr_classy_k"
 
 whitelist:                                # List of users whose challenges are always accepted.
 # - Username1
@@ -414,6 +414,7 @@ books:
   nimas: "./books/nimas.bin"
   draw: "./books/draw.bin"
   ches: "./books/ches.bin"
+
 
 
 
