@@ -34,9 +34,7 @@ jobs:
         # Set permissions for all engines
         echo "🔧 Setting engine permissions..."
         chmod +x engines/stockfish
-        chmod +x engines/fairy-stockfish_x86-64-bmi2
-        chmod +x engines/ShashChess39
-        chmod +x engines/sf
+        chmod +x engines/fireengine
 
         # Verify engines
         echo "📋 Listing engines:"
@@ -48,6 +46,6 @@ jobs:
 
     - name: Launch bot
       run: |
-        echo "Starting SKPS"
+        echo "Starting customengine"
         python -u user_interface.py matchmaking &
         wait
