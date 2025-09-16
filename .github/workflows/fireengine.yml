@@ -1,0 +1,107 @@
+name: Download and Commit Latest FireEngine
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * *'  # Runs daily at 03:00 UTC
+
+jobs:
+  download_and_commit_fireengine:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Remove old fireengine files
+        run: |
+          rm -f engines/fireengine
+          rm -f engines/fireengine*
+
+      - name: Get latest workflow run ID
+        id: get_run_id
+        run: |
+          RUN_ID=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/TheXdOneHimSelf/Stockfish/actions/workflows/compilation.yml/runs?status=success&per_page=1" \
+            | jq -r '.workflow_runs[0].id')
+          echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
+
+      - name: Download artifacts from latest run
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: 'TheXdOneHimSelf',
+              repo: 'Stockfish',
+              run_id: process.env.RUN_ID
+            });
+            
+            // Look for tar artifacts (GitHub will download them as zip)
+            const artifact = artifacts.data.artifacts.find(a => 
+              a.name.endsWith('.tar') || a.name.endsWith('.tar.gz') || 
+              a.name.includes('engine') || a.name.includes('binary')
+            );
+            
+            if (artifact) {
+              console.log(`Found artifact: ${artifact.name}`);
+              const download = await github.rest.actions.downloadArtifact({
+                owner: 'TheXdOneHimSelf',
+                repo: 'Stockfish',
+                artifact_id: artifact.id,
+                archive_format: 'zip'
+              });
+              
+              const fs = require('fs');
+              fs.writeFileSync('/tmp/artifact.zip', Buffer.from(download.data));
+              return artifact.name;
+            } else {
+              throw new Error('No artifact found');
+            }
+
+      - name: Extract and process tar file
+        run: |
+          # Extract the GitHub artifact zip to get the tar file
+          unzip /tmp/artifact.zip -d /tmp
+          
+          # Find the tar file that was inside the artifact
+          TAR_FILE=$(find /tmp -name "*.tar" -o -name "*.tar.gz" | head -1)
+          
+          if [ -z "$TAR_FILE" ]; then
+            echo "No tar file found in artifact"
+            exit 1
+          fi
+          
+          echo "Found tar file: $TAR_FILE"
+          
+          # Extract the tar file
+          tar -xf "$TAR_FILE" -C /tmp
+          
+          # Create engines directory if it doesn't exist
+          mkdir -p engines
+          
+          # Move and rename the binary from the tar extraction
+          mv /tmp/stockfish/stockfish-ubuntu-x86-64-bmi2 engines/fireengine
+          chmod +x engines/fireengine
+          
+          echo "Binary successfully moved to engines/fireengine"
+
+      - name: Clean up all temporary files
+        run: |
+          rm -rf /tmp/artifact.zip
+          rm -rf /tmp/*.tar /tmp/*.tar.gz
+          rm -rf /tmp/stockfish
+          rm -rf /tmp/artifact_extracted
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add engines/fireengine
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Update FireEngine binary from latest compilation"
+            git push
+          fi
