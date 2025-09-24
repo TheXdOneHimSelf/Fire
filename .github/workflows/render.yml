@@ -11,11 +11,17 @@ jobs:
       - name: Checkout your repo
         uses: actions/checkout@v3
 
+      - name: delete old bin
+        run: |
+          rm -f draw.bin white.bin black.bin  
+
       - name: Download and rename
         run: |
           mkdir -p book
-          curl -L -o books/ches.bin https://raw.githubusercontent.com/zonalraid45/Mypant/main/engines/merged.bin
-
+          curl -L -o books/draw.bin https://raw.githubusercontent.com/TheXdOneHimSelf/Polygot/main/draw.bin
+          curl -L -o books/white.bin https://raw.githubusercontent.com/TheXdOneHimSelf/Polygot/main/white.bin
+          curl -L -o books/black.bin https://raw.githubusercontent.com/TheXdOneHimSelf/Polygot/main/black.bin
+          
       - name: Commit
         run: |
           git config user.name "github-actions[bot]"
