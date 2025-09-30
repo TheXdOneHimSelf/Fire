@@ -38,12 +38,32 @@ jobs:
              -o config.yml \
              https://api.github.com/repos/TheXdOneHimSelf/configs/contents/FireConfig.yml
 
+      - name: Query latest Stockfish dev release asset URL
+        id: get_url
+        run: |
+          url=$(curl -s https://api.github.com/repos/official-stockfish/Stockfish/releases \
+            | jq -r '[.[] | select(.prerelease==true and (.tag_name|type == "string") and (.tag_name|test("^stockfish-dev")))] | .[0].assets[] | select(.name|test("stockfish-ubuntu-x86-64-bmi2.tar$")).browser_download_url')
+          echo "ASSET_URL=$url" >> $GITHUB_ENV
+
+      - name: Download and extract Stockfish
+        run: |
+          curl -L "$ASSET_URL" -o stockfish.tar
+          tar -xf stockfish.tar
+
+      - name: Move and rename Stockfish binary to 'engines/stockfish'
+        run: |
+          mkdir -p engines
+          mv stockfish/stockfish-ubuntu-x86-64-bmi2 engines/stockfish
+          chmod +x engines/stockfish
+
+      - name: Clean up
+        run: rm -rf stockfish stockfish.tar
+
     - name: Setup engines
       run: |      
         # Set permissions for all engines
         echo "🔧 Setting engine permissions..."
         chmod +x engines/stockfish
-        chmod +x engines/fireengine
 
         # Verify engines
         echo "📋 Listing engines:"
