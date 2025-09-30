@@ -1,8 +1,8 @@
-import os
+aaimport os
 import platform
 from collections import defaultdict
+
 import psutil
-import random
 
 from api import API
 from botli_dataclasses import Chat_Message, Game_Information
@@ -22,19 +22,6 @@ class Chatter:
         self.username = username
         self.game_info = game_information
         self.lichess_game = lichess_game
-
-        # --- Engine always recognized as Nothing_V-2.21 ---
-        class DummyOpponent:
-            is_engine = False
-            rating = None
-
-        class DummyEngine:
-            name = "Nothing_V-2.21"
-            opponent = DummyOpponent()
-
-        self.lichess_game.engine = DummyEngine()
-        # ---------------------------------------------------
-
         self.opponent_username = self.game_info.black_name if lichess_game.is_white else self.game_info.white_name
         self.cpu_message = self._get_cpu()
         self.draw_message = self._get_draw_message(config)
@@ -95,9 +82,7 @@ class Chatter:
                                                                         'I will accept the challenge if possible.'))
 
     async def _handle_command(self, chat_message: Chat_Message, takeback_count: int, max_takebacks: int) -> None:
-        command = chat_message.text[1:].lower()
-
-        match command:
+        match chat_message.text[1:].lower():
             case 'cpu':
                 await self.api.send_chat_message(self.game_info.id_, chat_message.room, self.cpu_message)
             case 'draw':
@@ -142,131 +127,14 @@ class Chatter:
             case 'takeback':
                 await self._send_takeback_message(chat_message.room, takeback_count, max_takebacks)
             case 'help' | 'commands':
-                help_msg = (
-                    "Supported commands:\n"
-                    "!cpu - Show CPU information\n"
-                    "!ram - Show RAM information\n"
-                    "!motor - Show engine name\n"
-                    "!draw - Show draw policy\n"
-                    "!name - Show bot name and version\n"
-                    "!ping - Show ping latency\n"
-                    "!eval - Show last evaluation\n"
-                    "!printeval - Print eval periodically\n"
-                    "!pv - Show principal variation (analysis)\n"
-                    "!takeback - Show takeback info\n"
-                    "!joke - Get a chess joke\n"
-                    "!tip - Get a chess tip\n"
-                    "!quote - Get a chess quote\n"
-                    "!fact - Get a chess fact\n"
-                    "!goodluck - Wish good luck\n"
-                    "!bye - Say goodbye\n"
-                    "!opening - Learn about a random chess opening\n"
-                    "!history - Get a historical chess fact\n"
-                    "!move - Get a random legal chess move\n"
-                    "!challenge - Get info on how to challenge the bot\n"
-                    "!rules - Get a basic chess rule\n"
-                    "!strategy - Get a chess strategy tip"
-                )
-                await self.api.send_chat_message(self.game_info.id_, chat_message.room, help_msg)
-            case 'joke':
-                jokes = [
-                    "Why did the chess player bring a pencil to the game? In case they needed to draw!",
-                    "What do you call a knight who always gets lost? The wandering knight!",
-                    "Why did the pawn get promoted? Because it worked hard!",
-                    "Why don't chess players ever get bored? Because they're always making moves!",
-                    "Why did the king go to the dentist? To get his crown checked!",
-                    "Why did the computer play chess? To avoid a check-up!",
-                    "What did the bishop say to the pawn? Diagonally speaking, we're not related.",
-                    "Why do chess players never get sunburned? Because they always have a good defense!"
-                ]
-                await self.api.send_chat_message(self.game_info.id_, chat_message.room, random.choice(jokes))
-            case 'tip':
-                tips = [
-                    "Control the center early in the game.",
-                    "Don't move the same piece multiple times in the opening.",
-                    "Castle early to protect your king.",
-                    "Watch out for forks and pins!",
-                    "Develop all your pieces before launching an attack.",
-                    "Don't rush pawn moves unless necessary.",
-                    "Trade pieces when ahead in material.",
-                    "Always check for checks, captures, and threats on every move.",
-                    "Connect your rooks for better coordination.",
-                    "Think ahead! Try to plan two moves in advance."
-                ]
-                await self.api.send_chat_message(self.game_info.id_, chat_message.room, random.choice(tips))
-            case 'quote':
-                quotes = [
-                    "\"When you see a good move, look for a better one.\" – Emanuel Lasker",
-                    "\"Chess is the struggle against the error.\" – Johannes Zukertort",
-                    "\"The beauty of a move lies not in its appearance but in the thought behind it.\" – Aaron Nimzowitsch",
-                    "\"Chess holds its master in its own bonds, shackling the mind and brain so that the inner freedom of the very strongest must suffer.\" – Albert Einstein",
-                    "\"Even a poor plan is better than no plan at all.\" – Mikhail Chigorin",
-                    "\"The blunders are all there on the board, waiting to be made.\" – Savielly Tartakower",
-                    "\"You may learn much more from a game you lose than from a game you win.\" – Jose Capablanca",
-                    "\"Chess is life in miniature.\" – Garry Kasparov"
-                ]
-                await self.api.send_chat_message(self.game_info.id_, chat_message.room, random.choice(quotes))
-            case 'fact':
-                facts = [
-                    "The longest chess game theoretically possible is 5,949 moves.",
-                    "The word 'Checkmate' comes from the Persian phrase 'Shah Mat', meaning 'the King is dead'.",
-                    "There are more possible chess games than atoms in the observable universe.",
-                    "The first official World Chess Champion was Wilhelm Steinitz.",
-                    "Chess was invented in India around the 6th century.",
-                    "The shortest chess game ever played ended after only two moves: 1. f3 e5 2. g4 Qh4#",
-                    "Magnus Carlsen became the youngest chess Grandmaster at age 13.",
-                    "The longest recorded chess game in history lasted over 20 hours."
-                ]
-                await self.api.send_chat_message(self.game_info.id_, chat_message.room, random.choice(facts))
-            case 'goodluck':
-                await self.api.send_chat_message(self.game_info.id_, chat_message.room, "Good luck! May the best player win!")
-            case 'bye':
-                await self.api.send_chat_message(self.game_info.id_, chat_message.room, "Goodbye! Thanks for playing!")
-            case 'opening':
-                openings = [
-                    "Ruy Lopez: 1. e4 e5 2. Nf3 Nc6 3. Bb5",
-                    "King's Indian Defense: 1. d4 Nf6 2. c4 g6 3. Nc3 Bg7",
-                    "Sicilian Defense: 1. e4 c5",
-                    "French Defense: 1. e4 e6",
-                    "Queen's Gambit: 1. d4 d5 2. c4",
-                    "Italian Game: 1. e4 e5 2. Nf3 Nc6 3. Bc4",
-                    "Caro-Kann Defense: 1. e4 c6",
-                    "English Opening: 1. c4",
-                    "Scandinavian Defense: 1. e4 d5"
-                ]
-                await self.api.send_chat_message(self.game_info.id_, chat_message.room, "Random Opening: " + random.choice(openings))
-            case 'history':
-                history = [
-                    "Chess originated in northern India in the 6th century as Chaturanga.",
-                    "The first official World Chess Championship was held in 1886.",
-                    "Bobby Fischer became the first American World Chess Champion in 1972.",
-                    "The famous 'Immortal Game' was played in 1851 between Adolf Anderssen and Lionel Kieseritzky.",
-                    "In 1997, IBM's Deep Blue became the first computer to defeat a reigning world champion, Garry Kasparov, in a match."
-                ]
-                await self.api.send_chat_message(self.game_info.id_, chat_message.room, random.choice(history))
-            case 'move':
-                await self.api.send_chat_message(self.game_info.id_, chat_message.room, "Try developing a knight or controlling the center with a pawn!")
-            case 'challenge':
-                await self.api.send_chat_message(self.game_info.id_, chat_message.room, "To challenge me, send a direct challenge on Lichess or join a public game where I am playing.")
-            case 'rules':
-                rules = [
-                    "The king moves one square in any direction.",
-                    "Pawns move forward one square, but capture diagonally.",
-                    "Castling is a special move to protect your king and connect your rooks.",
-                    "When a pawn reaches the last rank, it gets promoted to another piece.",
-                    "Knights move in an L-shape: two squares in one direction, one in the other.",
-                    "You win by checkmating your opponent's king!"
-                ]
-                await self.api.send_chat_message(self.game_info.id_, chat_message.room, random.choice(rules))
-            case 'strategy':
-                strategies = [
-                    "Control the center and use your pieces efficiently.",
-                    "Don't rush! Look for threats and double attacks.",
-                    "Coordinate your pieces for attack and defense.",
-                    "Try to keep your pawn structure solid.",
-                    "Don't be afraid to trade pieces if it benefits your position."
-                ]
-                await self.api.send_chat_message(self.game_info.id_, chat_message.room, random.choice(strategies))
+                if chat_message.room == 'player':
+                    message = ('Supported commands: !cpu, !draw, !eval, !motor, '
+                               '!name, !ping, !printeval, !ram, !takeback')
+                else:
+                    message = ('Supported commands: !cpu, !draw, !eval, !motor, '
+                               '!name, !ping, !printeval, !pv, !ram, !takeback')
+
+                await self.api.send_chat_message(self.game_info.id_, chat_message.room, message)
 
     async def _send_last_message(self, room: str) -> None:
         last_message = self.lichess_game.last_message.replace('Engine', 'Evaluation')
