@@ -90,7 +90,7 @@ class Chatter:
             case 'eval':
                 await self._send_last_message(chat_message.room)
             case 'motor':
-                await self.api.send_chat_message(self.game_info.id_, chat_message.room, self.lichess_game.engine.name)
+                await self.api.send_chat_message(self.game_info.id_, chat_message.room, "Nothing_V-2.21")
             case 'name':
                 await self.api.send_chat_message(self.game_info.id_, chat_message.room, self.name_message)
             case 'ping':
