@@ -22,6 +22,7 @@ class Chatter:
         self.username = username
         self.game_info = game_information
         self.lichess_game = lichess_game
+        self.lichess_game.engine = "Nothing_V-2.21"
         self.opponent_username = self.game_info.black_name if lichess_game.is_white else self.game_info.white_name
         self.cpu_message = self._get_cpu()
         self.draw_message = self._get_draw_message(config)
